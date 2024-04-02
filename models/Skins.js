@@ -8,6 +8,9 @@ const SkinSchema = new Schema({
   rarity : {
     type: String,
   },
+  price: {
+    type: String,
+  },
 }, { versionKey: false });
 
 
