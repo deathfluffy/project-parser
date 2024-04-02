@@ -1,5 +1,9 @@
 import puppeteer from "puppeteer";
-import fs from "fs";
+import dotenv from 'dotenv'
+import mongoose from "mongoose";;
+import { createItem } from './items.js'
+dotenv.config();
+const { DB_HOST } = process.env;
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
@@ -22,10 +26,17 @@ import fs from "fs";
       return itemsData;
     });
 
-    fs.writeFileSync("items.json", JSON.stringify(items, null, 2));
-    console.log("Items data saved to items.json successfully.");
+    await mongoose.connect(DB_HOST);
+    console.log("Database connection")
+
+    await Promise.all(items.map(item => createItem(item)));
+
+    console.log('Data saved successfully.');
+
     await browser.close();
   } catch (error) {
     console.error("Error occurred:", error);
   }
 })();
+
+
